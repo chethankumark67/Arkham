@@ -1,0 +1,28 @@
+[
+  {
+    "id": "blr-2022-09",
+    "name": "Bengaluru floods, 4-5 September 2022",
+    "area": "ORR / Bellandur",
+    "start": "2022-09-03",
+    "end": "2022-09-06",
+    "rain_point": [12.935, 77.68],
+    "model": "best_match",
+    "gauges": [
+      {"station": "Marathahalli (KSNDMC)", "mm": 129, "from": "2022-09-04T18:00", "to": "2022-09-05T04:00",
+       "note": "129 mm reported as of 03:15 on 5 Sep 2022"}
+    ],
+    "reported": {"time": "2022-09-05T07:00",
+                 "what": "Roads to the Marathahalli flyover and the ORR at Eco-Space under knee-deep water on the morning of 5 Sep; Bellandur lake overflowing (time approximate: 'morning')."},
+    "sites": [
+      {"id": "eco_space", "name": "ORR at Eco-Space", "lat": 12.9264, "lon": 77.6823},
+      {"id": "bellandur", "name": "Bellandur", "lat": 12.9352, "lon": 77.6680},
+      {"id": "yemalur", "name": "Yemalur", "lat": 12.9480, "lon": 77.6880},
+      {"id": "marathahalli", "name": "Marathahalli bridge", "lat": 12.9567, "lon": 77.7011}
+    ],
+    "sources": [
+      {"label": "The News Minute, 5 Sep 2022", "url": "https://www.thenewsminute.com/karnataka/bengaluru-flooded-again-after-rains-marathahalli-orr-under-water-167535"},
+      {"label": "Scroll, 5 Sep 2022", "url": "https://scroll.in/latest/1032055/bengaluru-roads-flooded-again-after-overnight-heavy-rainfall"},
+      {"label": "The Quint, 5 Sep 2022", "url": "https://www.thequint.com/south-india/rains-in-bengaluru-continue-to-wreak-havoc-three-lakes-overflow-into-homes"}
+    ]
+  }
+]

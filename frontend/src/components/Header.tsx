@@ -33,10 +33,10 @@ function Badge() {
   const bk = useStore(s => s.bk);
   const v = bk.ov?.validation;
   return (
-    <span title={bk.ok ? 'Flood depth: modelled (Tier 1 terrain screen on Copernicus DSM). Validation: BBMP/KGIS flood points. Roads & hospitals: OpenStreetMap. Population: modelled.' : 'Start the API: cd backend && uvicorn app.main:app --port 8000'}
+    <span title={bk.ok ? 'Flood depth: modelled (Tier 1 terrain screen on Copernicus DSM). Validation: BBMP/KGIS flood points. Roads & hospitals: OpenStreetMap. Population: GHSL 2025 (observed).' : 'Start the API: cd backend && uvicorn app.main:app --port 8000'}
       style={{ marginLeft: 12, font: '600 11px var(--mono,monospace)', padding: '3px 8px', borderRadius: 10, border: '1px solid #2b3138', cursor: 'help',
         color: bk.ok ? '#9be0b8' : '#b7bec7', background: bk.ok ? '#173a28' : 'transparent' }}>
-      {bk.ok ? '● PHYSICS BACKEND' + (v ? ` · BBMP hit ${Math.round(v.hit_rate * 100)}% · ${v.lift_over_random}× lift` : '') : '○ OFFLINE · synthetic model'}
+      {bk.ok ? '● PHYSICS BACKEND' + (v?.held_out ? ` · held-out AUC ${v.held_out.roc_auc} · ${v.held_out.lift}× lift` : v ? ` · BBMP hit ${Math.round(v.hit_rate * 100)}% · ${v.lift_over_random}× lift` : '') : '○ OFFLINE · synthetic model'}
     </span>
   );
 }

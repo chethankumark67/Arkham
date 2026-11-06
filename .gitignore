@@ -32,3 +32,4 @@ backend/cache/
 # local archive of files not needed in the repo
 /waste/
 /arkham-city-twin.zip
+/arkham.zip

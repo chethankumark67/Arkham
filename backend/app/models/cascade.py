@@ -14,7 +14,7 @@ import numpy as np
 from scipy.spatial import cKDTree
 
 from .. import config as C
-from ..data import grid_spec, hospitals, haversine_km
+from ..data import grid_spec, hospitals, haversine_km, population_grid, population_points
 
 SPEED_KMH = {"motorway": 50, "trunk": 40, "primary": 30, "secondary": 25, "tertiary": 20}
 SLOW_FACTOR = 4.0
@@ -54,12 +54,21 @@ def network():
     nodes = list(G.nodes)
     lat = np.array([G.nodes[n]["lat"] for n in nodes])
     lon = np.array([G.nodes[n]["lon"] for n in nodes])
-    w = np.exp(-haversine_km(lat, lon, *C.CENTER) / 9.0)
-    pop = w / w.sum() * C.CITY_POPULATION
+    tree = cKDTree(np.c_[lat, lon * np.cos(np.radians(13))])
+    pts = population_points()
+    if pts is not None:
+        # Observed: every GHSL ~90 m cell is assigned to its nearest road junction
+        plat, plon, ppop = pts
+        _, idx = tree.query(np.c_[plat, plon * np.cos(np.radians(13))])
+        pop = np.bincount(idx, weights=ppop, minlength=len(nodes)).astype(float)
+        pop_source = "GHSL GHS-POP 2025 (R2023A)"
+    else:
+        w = np.exp(-haversine_km(lat, lon, *C.CENTER) / 9.0)
+        pop = w / w.sum() * C.CITY_POPULATION
+        pop_source = "modelled density gradient (fallback)"
     for n, p in zip(nodes, pop):
         G.nodes[n]["pop"] = float(p)
 
-    tree = cKDTree(np.c_[lat, lon * np.cos(np.radians(13))])
     hs = []
     for h in hospitals():
         dist, i = tree.query([h["lat"], h["lon"] * np.cos(np.radians(13))])
@@ -75,7 +84,7 @@ def network():
     rr, cc = g.rc(flat_lat, flat_lon)
     node_rc = g.rc(lat, lon)
     return {"G": G, "nodes": nodes, "node_rc": node_rc, "node_pop": pop, "edges": edges, "hospitals": hs, "seg": seg, "rr": rr, "cc": cc,
-            "total_pop": float(pop.sum())}
+            "total_pop": float(pop.sum()), "pop_source": pop_source}
 
 
 def _times_to_hospital(G, sources, weight):
@@ -90,7 +99,10 @@ def baseline():
     G = net["G"]
     t = _times_to_hospital(G, {h["node"] for h in net["hospitals"]}, lambda u, v, d: d["t0"])
     cut = [n for n in net["nodes"] if t.get(n, np.inf) > C.CUTOFF_MINUTES]
-    return {"times": t, "cut_pop": sum(G.nodes[n]["pop"] for n in cut)}
+    tm = _times_to_hospital(G, {h["node"] for h in net["hospitals"] if h.get("tier") == "major"}, lambda u, v, d: d["t0"])
+    cut_m = [n for n in net["nodes"] if tm.get(n, np.inf) > C.CUTOFF_MINUTES]
+    return {"times": t, "cut_pop": sum(G.nodes[n]["pop"] for n in cut),
+            "cut_pop_major": sum(G.nodes[n]["pop"] for n in cut_m)}
 
 
 def run(depth: np.ndarray, detail: bool = True) -> dict:
@@ -108,14 +120,17 @@ def run(depth: np.ndarray, detail: bool = True) -> dict:
         return None if f is None else data["t0"] * f
 
     g = grid_spec()
-    hosp_out, live = [], set()
+    hosp_out, live, live_major = [], set(), set()
     for h in net["hospitals"]:
         r, c = g.rc(h["lat"], h["lon"])
         hd = float(depth[r, c])
         ok = hd < C.DEPTH_SLOW
         if ok:
             live.add(h["node"])
-        hosp_out.append({"name": h["name"], "lat": h["lat"], "lon": h["lon"], "depth_m": round(hd, 2), "functional": ok})
+            if h.get("tier") == "major":
+                live_major.add(h["node"])
+        hosp_out.append({"name": h["name"], "lat": h["lat"], "lon": h["lon"], "depth_m": round(hd, 2), "functional": ok,
+                         "tier": h.get("tier", "general")})
 
     t = _times_to_hospital(G, live, weight)
     base = baseline()
@@ -125,10 +140,19 @@ def run(depth: np.ndarray, detail: bool = True) -> dict:
     delays = [t[n] - base["times"][n] for n in net["nodes"] if n in t and n in base["times"]]
 
     km = lambda m: round(float(sum(G.edges[edges[i]]["length"] for i in np.flatnonzero(m))) / 1000 / 2, 1)  # /2: two-way
-    node_depth = depth[net["node_rc"]]
-    exposed = float(net["node_pop"][node_depth > C.DEPTH_SLOW].sum())
+    pg = population_grid()
+    if pg is not None:   # observed: people living in cells deeper than 0.3 m
+        exposed = float(pg[depth > C.DEPTH_SLOW].sum())
+    else:
+        node_depth = depth[net["node_rc"]]
+        exposed = float(net["node_pop"][node_depth > C.DEPTH_SLOW].sum())
+    tm = _times_to_hospital(G, live_major, weight)
+    cut_major = sum(G.nodes[n]["pop"] for n in net["nodes"] if tm.get(n, np.inf) > C.CUTOFF_MINUTES) - base["cut_pop_major"]
     out = {
         "people_exposed": int(exposed),
+        "people_cut_off_major": int(max(0, cut_major)),
+        "hospitals_major_flooded": sum(1 for h in hosp_out if not h["functional"] and h["tier"] == "major"),
+        "population_source": net["pop_source"],
         "people_cut_off": int(max(0, cut_pop)),
         "people_unreachable": int(sum(G.nodes[n]["pop"] for n in unreachable)),
         "roads_closed_km": km(closed),

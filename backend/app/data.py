@@ -104,6 +104,33 @@ def bbmp_points() -> list[dict]:
 
 
 @lru_cache
+def population_points() -> tuple[np.ndarray, np.ndarray, np.ndarray] | None:
+    """GHSL population cells (lat, lon, people) inside the study area, or None if the raster is missing."""
+    if not C.POPULATION_TIF.exists():
+        return None
+    import rasterio
+    with rasterio.open(C.POPULATION_TIF) as s:
+        a = s.read(1).astype(float)
+        rows, cols = np.nonzero(a > 0)
+        xs, ys = rasterio.transform.xy(s.transform, rows, cols)
+    return np.asarray(ys), np.asarray(xs), a[rows, cols]
+
+
+@lru_cache
+def population_grid() -> np.ndarray | None:
+    """People per Tier 1 grid cell (GHSL summed onto the 0.0015° grid), or None if the raster is missing."""
+    pts = population_points()
+    if pts is None:
+        return None
+    g = grid_spec()
+    lat, lon, pop = pts
+    r, c = g.rc(lat, lon)
+    out = np.zeros((g.rows, g.cols))
+    np.add.at(out, (r, c), pop)
+    return out
+
+
+@lru_cache
 def hospitals() -> list[dict]:
     if not C.HOSPITALS_GEOJSON.exists():
         return []
@@ -111,7 +138,9 @@ def hospitals() -> list[dict]:
     out = []
     for f in gj["features"]:
         lon, lat = f["geometry"]["coordinates"][:2]
-        out.append({"name": f["properties"].get("name") or "Hospital (unnamed)", "lat": lat, "lon": lon})
+        p = f["properties"]
+        out.append({"name": p.get("name") or "Hospital (unnamed)", "lat": lat, "lon": lon,
+                    "tier": p.get("tier") or "general", "reason": p.get("reason")})
     return out
 
 

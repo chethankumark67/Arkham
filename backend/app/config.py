@@ -11,7 +11,9 @@ LAT_MIN, LAT_MAX, LON_MIN, LON_MAX = 12.80, 13.20, 77.45, 77.85
 # Tier 1 screening grid resolution in degrees (~165 m at Bengaluru's latitude)
 GRID_DEG = 0.0015
 
-DEM_FILES = sorted(RAW.glob("dem_*.tif"))  # raw Copernicus tiles (development)
+# Bare-earth FABDEM (Copernicus with buildings & trees removed; Hawker et al. 2022, CC BY-NC-SA 4.0) when present,
+# otherwise the raw Copernicus DSM tiles (development only; deployments use the cropped DEM_BBOX COG).
+DEM_FILES = sorted(RAW.glob("fabdem_*.tif")) or sorted(RAW.glob("dem_*.tif"))
 BBMP_KML = {
     "vulnerable": RAW / "vulnerable.kml",
     "flood_prone": RAW / "flood_prone.kml",
@@ -20,7 +22,9 @@ BBMP_KML = {
 ROADS_GRAPHML = RAW / "roads.graphml"
 HOSPITALS_GEOJSON = RAW / "hospitals.geojson"
 TERRAIN_NPZ = PROCESSED / "terrain.npz"
-DEM_BBOX = PROCESSED / "dem_bbox.tif"  # cropped COG used when the raw tiles are absent (deployments)
+DEM_BBOX = PROCESSED / "dem_bbox.tif"
+# GHSL GHS-POP R2023A, epoch 2025, 3 arc-second (~90 m), cropped to the study area (scripts/build_population.py)
+POPULATION_TIF = PROCESSED / "population.tif"  # cropped COG used when the raw tiles are absent (deployments)
 
 # Road failure thresholds (m of water), from the build spec
 DEPTH_SLOW = 0.3
@@ -28,7 +32,7 @@ DEPTH_CLOSED = 0.7
 # A node is "cut off" if its fastest route to a functioning hospital exceeds this
 CUTOFF_MINUTES = 30.0
 
-# Bengaluru urban population used to allocate people to road nodes. [VERIFY] ~13.6M (2025 est.)
+# Fallback only (used when data/processed/population.tif is missing): city total spread by a density gradient
 CITY_POPULATION = 13_600_000
 
 # Interventions: id, label, cost (₹ crore), effect parameters. Costs mirror the frontend INT array.

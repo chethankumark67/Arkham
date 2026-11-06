@@ -92,3 +92,12 @@
 #complaints .cm-lbnav{display:flex;gap:12px;align-items:center;color:#fff}
 @media (max-width:1100px){#complaints .cm-report{grid-template-columns:1fr 1fr}#complaints .cm-photoc{grid-column:1/-1}#complaints .cm-board{grid-template-columns:1fr}}
 @media (max-width:760px){#complaints .cm-report{grid-template-columns:1fr}#complaints .cm-cats{grid-template-columns:repeat(3,1fr)}}
+/* Accessibility: visible keyboard focus, headings that keep the card-title look, screen-reader-only text */
+#complaints button:focus-visible,#complaints [role=button]:focus-visible,#complaints [tabindex]:focus-visible,#complaints input[type=checkbox]:focus-visible{outline:2px solid #FE9135;outline-offset:2px}
+#complaints h1,#complaints h2,#complaints h3{margin:0;font-weight:inherit}
+#complaints h2.t{font-size:inherit;letter-spacing:inherit}
+#complaints #cm-panel{display:contents}
+#complaints .cm-lang{font-weight:600}
+#complaints .cm-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#complaints:lang(kn){font-family:Inter,'Noto Sans Kannada','Tunga',system-ui,sans-serif}
+#complaints:lang(kn) .cm-cat{font-size:11px;line-height:1.3}

@@ -66,3 +66,10 @@ cd frontend && vercel login && vercel --prod --build-env VITE_API_URL=https://<y
 - `frontend`: `npx tsc --noEmit -p tsconfig.app.json && npm run build`.
 
 See [backend/README.md](backend/README.md) for the models, data sources, API and known limits.
+## Historical replay: Bengaluru floods, 4–5 Sep 2022
+
+`GET /api/replays/blr-2022-09` (and the **Historical replay** card under Hazard Modelling → Natural hazards) re-runs the Tier 1 screen hour by hour through that week. Each hour's rainfall is the trailing 6 h total; a site is flagged when its depth exceeds 0.3 m.
+
+- **Rainfall:** the hourly timing comes from Open-Meteo. Every gridded Open-Meteo product (ERA5, archived GFS/JMA, best-match) under-reads this convective event at about 10–25 mm/day. Hours in the gauge window are therefore rescaled to the KSNDMC Marathahalli reading (129 mm by 03:15 on 5 Sep). The raw run is reported too: it **never flags**.
+- **Result:** ORR at Eco-Space, Bellandur and Yemalur are flagged at 20:00 on 4 Sep. Flooding was first reported on the morning of 5 Sep (taken as 07:00, approximate), so the lead time is about 11 h. This is a nowcast lead (the gauges report in real time), not a forecast lead, and much of it comes from the burst falling overnight. The Marathahalli bridge cell is never flagged.
+- Event definitions and sources are in `backend/app/replays.json`.

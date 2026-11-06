@@ -19,8 +19,8 @@ from pydantic import BaseModel, Field
 from . import config as C
 from . import maplayers, storage
 from .data import bbmp_points, grid_spec, hospitals
-from .models import cascade, citywide, flood, heat, optimizer, rainfall, solver
-from .models.validation import validate
+from .models import cascade, citywide, flood, heat, optimizer, rainfall, replay, solver
+from .models.validation import ranking_metrics, report as validation_report, split_points, validate
 
 app = FastAPI(title="ARKHAM City Digital Twin API", version="0.1.0",
               description="Flood screening, BBMP validation, road/hospital cascade and budgeted interventions for Bengaluru.")
@@ -34,7 +34,8 @@ PROVENANCE = {
     "roads_hospitals": "Observed: OpenStreetMap (major roads, amenity=hospital)",
     "rainfall": "Observed/forecast: Open-Meteo",
     "flood_depth": "Modelled: Tier 1 terrain screening, not a hydrodynamic solve",
-    "population": "Modelled: city total distributed by a density gradient (no census grid yet)",
+    "population": "Observed: GHSL GHS-POP 2025 (EC JRC, R2023A), ~90 m grid, assigned to the nearest road junction",
+    "hospitals": "Observed: OpenStreetMap, filtered to emergency-capable hospitals (scripts/build_facilities.py): major + general tiers",
     "other_domains": "Synthetic: illustrative values for the 11 non-flood domains",
 }
 
@@ -60,7 +61,8 @@ def _scenario(rain: float, drain: float, ivs: list[str], hour: float | None = No
     members = flood.ensemble_members(rain)
     prob = flood.probability_field(sc, members)
     res = {"scenario": sc, "depth": depth, "prob": prob, "cascade": cascade.run(depth),
-           "validation": validate(depth), "hotspots": flood.hotspots(depth, prob)}
+           "validation": validate(depth) | {"held_out": ranking_metrics(depth, split_points(bbmp_points())[1])},
+           "hotspots": flood.hotspots(depth, prob)}
     _cache[k] = res
     storage.log_run(rain, drain, ivs, hour, flood.summary(depth), res["cascade"])
     if len(_cache) > 256:
@@ -152,7 +154,9 @@ def flood_sample(req: SampleReq):
 
 @app.get("/api/validation")
 def validation(rain: float = 110, drain: float = 100, iv: str | None = None):
-    return _scenario(rain, drain, _ivs(iv))["validation"]
+    """Hit rate on all BBMP points + ROC-AUC / precision / recall / lift on the held-out half (parameters were
+    calibrated on the other half)."""
+    return validation_report(_scenario(rain, drain, _ivs(iv))["depth"])
 
 
 @app.get("/api/cascade")
@@ -200,6 +204,28 @@ def live(drain: float = 100):
     f = rainfall.forecast()
     r = float(f["total_mm"])
     return {"rainfall": f, **scenario(rain=r, drain=drain, iv=None, detail=False, probabilities=False)}
+
+
+@app.get("/api/replays")
+def replays():
+    """Historical events available for replay."""
+    return [{k: e[k] for k in ("id", "name", "area", "start", "end")} for e in replay.EVENTS]
+
+
+@app.get("/api/replays/{event_id}")
+def replay_ep(event_id: str, drain: float = Query(100, ge=10, le=200)):
+    """Re-run the screen hour by hour through a real past event (raw and gauge-corrected rainfall)."""
+    key = f"replay:{event_id}:{round(drain)}"
+    out = storage.cache_get(key)
+    if out is None:
+        try:
+            out = replay.replay(event_id, drain)
+        except KeyError:
+            raise HTTPException(404, "unknown event")
+        except Exception as e:
+            raise HTTPException(503, f"historical rainfall unavailable: {str(e)[:120]}")
+        storage.cache_set(key, out)
+    return out
 
 
 @app.get("/api/domains")
@@ -401,9 +427,9 @@ def impact(rain: float = Query(110, ge=0, le=400), drain: float = Query(100, ge=
         "zones": zone_rows,
         "hotspots": res["hotspots"][:10],
         "sectors": [
-            {"sector": "Healthcare", "metric": f"{cas['hospitals_flooded']} hospitals flooded · {cas['people_cut_off']:,} people >30 min from care"},
+            {"sector": "Healthcare", "metric": f"{cas['hospitals_flooded']} hospitals flooded ({cas.get('hospitals_major_flooded', 0)} major) · {cas['people_cut_off']:,} people >30 min from care · {cas.get('people_cut_off_major', 0):,} >30 min from a major hospital"},
             {"sector": "Transport", "metric": f"{cas['roads_closed_km']} km closed · {cas['roads_slowed_km']} km slowed · p90 +{cas['p90_extra_minutes']} min"},
-            {"sector": "Population", "metric": f"{cas['people_exposed']:,} people in flooded cells (modelled)"},
+            {"sector": "Population", "metric": f"{cas['people_exposed']:,} people living in flooded cells (GHSL 2025 population grid)"},
             {"sector": "Economy / logistics", "metric": f"{round(cas['roads_closed_km'] + 0.25 * cas['roads_slowed_km'])} km-equivalent freight network lost"},
         ],
         "interventions": {"baseline_cut_off": opt["baseline"]["people_cut_off"], "best": opt["best"],

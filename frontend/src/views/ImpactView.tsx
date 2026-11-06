@@ -87,9 +87,9 @@ export default function ImpactView() {
         return <><tr><th>Zone</th><th>Flagged</th><th></th><th className="num">Max depth</th></tr>
           {data.zones.map((z: any) => <tr key={z.zone} title={z.wards.join(', ')}><td>{z.zone}<br /><span className="muted">{z.wards.slice(0, 3).join(', ')}</span></td><td className="num">{z.flagged}/{z.points}</td><td style={{ width: '30%' }}><Bar v={z.flagged} max={zm} c={z.share > .6 ? '#e5533d' : z.share > .35 ? '#FE9135' : '#FBC246'} /></td><td className="num">{z.max_depth_m} m</td></tr>)}</>;
       })()}</tbody></table></section>
-      <section className="card"><h3><span>Hospitals losing function</span><span className="muted" id="iaHn">{k && `${k.hospitals_flooded} of ${k.hospitals_total} OSM hospitals`}</span></h3><table id="iaHosp"><tbody>{data && <>
+      <section className="card"><h3><span>Hospitals losing function</span><span className="muted" id="iaHn">{k && `${k.hospitals_flooded} of ${k.hospitals_total} hospitals · ${k.hospitals_major_flooded ?? 0} major`}</span></h3><table id="iaHosp"><tbody>{data && <>
         <tr><th>Hospital</th><th className="num">Depth</th></tr>
-        {data.hospitals.length ? data.hospitals.map((h: any, i: number) => <tr key={i}><td>✚ {h.name}</td><td className="num" style={{ color: '#e5533d' }}>{h.depth_m} m</td></tr>) : <tr><td className="muted">No hospitals flooded</td></tr>}</>}</tbody></table></section>
+        {data.hospitals.length ? data.hospitals.map((h: any, i: number) => <tr key={i}><td>✚ {h.name}{h.tier === 'major' && <span className="tag" style={{ marginLeft: 6 }}>MAJOR</span>}</td><td className="num" style={{ color: '#e5533d' }}>{h.depth_m} m</td></tr>) : <tr><td className="muted">No hospitals flooded</td></tr>}</>}</tbody></table></section>
       <section className="card"><h3><span>Roads closed (≥ 0.7 m)</span></h3><table id="iaRoads"><tbody>{data && (() => {
         const rm = Math.max(1, ...data.roads.map((r: any) => r.km));
         return <><tr><th>Road</th><th></th><th className="num">km</th></tr>

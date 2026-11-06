@@ -8,6 +8,7 @@ import './modelling/hazard.css';
 import CascadeGraph, { cascPath } from './modelling/CascadeGraph';
 import ForecastChart from './modelling/ForecastChart';
 import Dbtn from './modelling/Dbtn';
+import ReplayCard from './modelling/ReplayCard';
 
 /* legacy: Open-Meteo hourly precipitation sets the first data feed to Live */
 let feedStarted = false;
@@ -121,6 +122,7 @@ export default function ModellingView() {
         {sim ? <Inputs /> : <div className="card hm-card hm-live"><span><i className="hm-dot" />Live · rainfall {M.rain} mm{FE[0][3] == 'Live' ? ' from Open-Meteo' : ''}</span>
           <button className="btn hm-mini" onClick={() => { M.mode = 'sim'; update(); }}>Simulate</button></div>}
         <Summary ms={bk.ms} bkOk={bk.ok} />
+        {M.sub == 0 && <ReplayCard />}
         <div className="card hm-card"><div className="t">Top hotspots</div><div className="hm-body" id="mrk">
           {rk.slice(0, 3).map(([p, r]: any) => <div key={p[5]} className={'hm-hot' + (M.sel == p[5] ? ' on' : '')} onClick={() => { M.sel = p[5]; bump(); }}>
             <span className="hm-ell">{p[1]}</span><div className="bar"><i style={{ width: r * 100 + '%', background: hx(r) }} /></div><b>{Math.round(r * 100)}%</b></div>)}

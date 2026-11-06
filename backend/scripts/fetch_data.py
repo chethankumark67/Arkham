@@ -34,7 +34,7 @@ def dl(url, dest: Path):
 
 
 def osm():
-    if C.ROADS_GRAPHML.exists() and C.HOSPITALS_GEOJSON.exists():
+    if C.ROADS_GRAPHML.exists() and (C.RAW / "osm_health_facilities.geojson").exists():
         print("skip osm"); return
     import osmnx as ox
     ox.settings.overpass_rate_limit = False
@@ -48,9 +48,11 @@ def osm():
                 G = ox.graph_from_bbox(bbox, network_type="drive",
                                        custom_filter='["highway"~"motorway|trunk|primary|secondary|tertiary"]')
                 ox.save_graphml(G, C.ROADS_GRAPHML)
-            h = ox.features_from_bbox(bbox, {"amenity": ["hospital"]})[["name", "geometry"]].copy()
-            h["geometry"] = h.to_crs(32643).geometry.centroid.to_crs(4326)
-            h.reset_index(drop=True).to_file(C.HOSPITALS_GEOJSON, driver="GeoJSON")
+            # all health facilities with footprints + tags; build_facilities.py keeps emergency-capable hospitals
+            h = ox.features_from_bbox(bbox, {"amenity": ["hospital", "clinic", "doctors"], "healthcare": ["hospital"]})
+            keep = [c for c in ["name", "amenity", "healthcare", "healthcare:speciality", "beds", "emergency",
+                                "operator", "operator:type", "building", "geometry"] if c in h.columns]
+            h[keep].reset_index(drop=True).to_file(C.RAW / "osm_health_facilities.geojson", driver="GeoJSON")
             print(f"osm ok via {url} in {time.time()-t:.0f}s"); return
         except Exception as e:
             print("overpass failed:", url, str(e)[:100])
@@ -64,5 +66,8 @@ if __name__ == "__main__":
     for t in ("N12_00", "N13_00"):
         dl(DEM.format(t=t), C.RAW / f"dem_{t}.tif")
     osm()
+    import subprocess
+    subprocess.run([sys.executable, str(Path(__file__).parent / "build_facilities.py")], check=True)
+    subprocess.run([sys.executable, str(Path(__file__).parent / "build_population.py")], check=True)
     from app.prepare import prepare
     prepare()

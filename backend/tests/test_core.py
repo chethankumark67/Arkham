@@ -116,3 +116,42 @@ def test_solver_never_creates_water():
     r = solver.simulate(z, dx, 60, 0, 30, rain_minutes=30, frames=1)
     stored = r["snapshots"][-1].sum() * dx * dx
     assert stored <= 0.060 / 2 * z.size * dx * dx * 1.001 and r["hmax"].max() < 10
+
+
+def test_population_is_observed_ghsl():
+    from app.data import population_grid
+    pg = population_grid()
+    assert pg is not None and 12e6 < pg.sum() < 18e6          # GHSL 2025 inside the study box ≈ 15.3 M
+    from app.models import cascade
+    assert cascade.network()["pop_source"].startswith("GHSL")
+
+
+def test_hospitals_are_emergency_capable_only():
+    from app.data import hospitals
+    hs = hospitals()
+    names = " | ".join(h["name"].lower() for h in hs)
+    for bad in ("dental", "netralaya", "ivf", "diagnostic", "pathlab"):
+        assert bad not in names
+    assert any("nimhans" in h["name"].lower() and h["tier"] == "major" for h in hs)
+    assert {h["tier"] for h in hs} <= {"major", "general"}
+
+
+def test_cascade_reports_major_hospital_access():
+    r = client.get("/api/scenario?rain=130").json()["cascade"]
+    assert {"people_cut_off_major", "hospitals_major_flooded", "population_source"} <= set(r)
+    assert r["hospitals_major_flooded"] <= r["hospitals_flooded"]
+
+
+def test_replay_gauge_correction_and_lead(monkeypatch):
+    from app.models import replay
+    times = [f"2022-09-04T{h:02d}:00" for h in range(24)]
+    raw = [0.0] * 24; raw[20] = 4.0; raw[21] = 1.0  # the gridded product sees only 5 mm
+    monkeypatch.setattr(replay, "fetch_rain", lambda ev: (times, raw, "test"))
+    ev = replay.EVENTS[0]
+    monkeypatch.setitem(ev, "gauges", [{"station": "t", "mm": 120, "from": "2022-09-04T19:00", "to": "2022-09-04T23:00"}])
+    monkeypatch.setitem(ev, "reported", {"time": "2022-09-05T07:00", "what": "t"})
+    assert abs(sum(replay.gauge_correct(times, raw, ev["gauges"])) - 120) < 1e-6
+    r = client.get(f"/api/replays/{ev['id']}").json()
+    assert r["raw"]["first_any"] is None
+    assert r["gauge_corrected"]["first_any"] == "2022-09-04T20:00" and r["gauge_corrected"]["lead_hours"] == 11.0
+    assert client.get("/api/replays/nope").status_code == 404

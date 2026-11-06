@@ -2,7 +2,7 @@
 
 Method (screening, not hydrodynamics):
   excess rain  = max(0, rain * runoff_coef - drain_capacity)              [mm, per cell]
-  conveyance   = excess * K * (log acc / log acc_max)^1.5 * exp(-HAND / H0)  -> water collecting along drainage lines
+  conveyance   = excess * K * (log acc / log acc_max)^ACC_EXP * exp(-HAND / H0)  -> water collecting along drainage lines
   ponding      = min(depression depth, excess * P)                       -> water trapped in depressions
   depth        = conveyance + ponding                                     [m]
 Probability = share of a rainfall ensemble in which depth exceeds 0.3 m.
@@ -19,9 +19,11 @@ from scipy import ndimage
 from .. import config as C
 from ..data import bbmp_points, grid_spec, haversine_km, terrain
 
-K_CONVEY = 45.0
-H0 = 2.0
-P_POND = 12.0
+# Calibrated on the calibration half of BBMP points (validation.split_points); held-out half used for reporting.
+K_CONVEY = 90.0
+H0 = 1.0
+ACC_EXP = 3.0
+P_POND = 0.0
 BASE_DRAIN_MM = 50.0   # event depth the primary drain network clears at 100% capacity [VERIFY with BBMP SWD]
 RUNOFF = 0.75          # impervious-dominated urban runoff coefficient
 STORM_H = 6.0          # design storm duration (frontend rainfall is "mm / 6 h")
@@ -96,7 +98,7 @@ def depth_field(sc: Scenario, rain_mm: float | None = None) -> np.ndarray:
     excess_m = np.maximum(0.0, water_in - out_ch) / 1000.0
     pond_excess_m = np.maximum(0.0, water_in - out_pond) / 1000.0
     accn = np.log1p(t["acc"]) / np.log1p(t["acc"].max())
-    convey = excess_m * K_CONVEY * accn ** 1.5 * np.exp(-t["hand"] / H0)
+    convey = excess_m * K_CONVEY * accn ** ACC_EXP * np.exp(-t["hand"] / H0)
     pond = np.minimum(t["sink"], pond_excess_m * P_POND)
     depth = convey + pond
     if "pumps" in iv:

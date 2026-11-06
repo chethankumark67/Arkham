@@ -46,15 +46,16 @@ The Overview map is a Leaflet map with Esri satellite or CARTO dark tiles. No AP
 |---|---|---|
 | Terrain | Copernicus GLO-30 (30 m), tiles N12/N13 E077 | Observed. This is a **DSM**: building heights are included. |
 | Flood points | OpenCity: BBMP/KGIS layers for flood-vulnerable (200), flood-prone (70) and low-lying (129) locations; 391 after de-duplication | Observed |
-| Roads, hospitals | OpenStreetMap: roads from motorway to tertiary, `amenity=hospital` | Observed |
+| Roads | OpenStreetMap: roads from motorway to tertiary | Observed |
+| Hospitals | OpenStreetMap health facilities (2,276), filtered by `scripts/build_facilities.py` to **842 emergency-capable hospitals: 240 major, 602 general**. Excluded: dental, eye, IVF, diagnostics, AYUSH, PHCs and clinics; each exclusion is kept with its reason in `health_facilities_excluded.geojson`. | Observed + rule-based filter |
 | Rainfall | Open-Meteo forecast and ensemble | Observed/forecast |
-| Population | 13.6 M people spread over road nodes with a density gradient | **Modelled** [VERIFY] |
+| Population | **GHSL GHS-POP 2025** (EC JRC, R2023A, ~90 m, CC BY 4.0): 15.28 M people in the study area. Each cell is assigned to its nearest road junction for the cascade, and people in flooded cells are counted directly. | Observed (modelled grid product) |
 
 ## Models
 
 - **Tier 1** (`models/flood.py`): a 267×267 grid with 163 m cells. Rain beyond the runoff and drain capacity is routed by flow accumulation and height above the nearest drainage, plus water that ponds in depressions. This is a *screening* model, not hydrodynamics.
 - **Time**: the rainfall total is spread over a 6 h storm while the drains run continuously. Water builds up, peaks at about 5–6 h, then recedes. Channels clear first; depressions empty at 35% of the drain rate.
-- **Validation** (`models/validation.py`): at 110 mm rain, **44% of BBMP points fall in flagged cells while 22% of the area is flagged, a 2× lift over random**. Always report the hit rate and the flagged area together. Note that the BBMP lists are static inventories of known flood spots, not records of a single event.
+- **Validation** (`models/validation.py`): the 391 BBMP points are split into fixed calibration and held-out halves. Parameters were tuned on the calibration half only. **Held-out at 110 mm: ROC-AUC 0.73, recall 0.37, precision 0.19, lift 2.9× over the urban area flagged** (earlier uncalibrated model: 2.3×). Burning the BBMP 2022 stormwater drains into the terrain was tested and gave no held-out gain, so it isn't used. `GET /api/validation` returns the full report. BBMP lists are inventories of flood-prone spots, not dated events, so precision is a lower bound.
 - **Cascade** (`models/cascade.py`): a NetworkX graph of the road network. Roads at 0.3 m depth slow to 25% speed and close at 0.7 m. Shortest paths are computed from every functioning hospital, and a place counts as cut off when the trip takes more than 30 minutes.
 - **Optimizer** (`models/optimizer.py`): evaluates all 32 portfolios of the 5 interventions exactly, with costs matching the frontend's `INT` list.
 - **Tier 2** (`models/solver.py`): the local-inertial scheme of Bates et al. (2010), which is LISFLOOD-FP's ACC method, on the native 30 m DEM.
@@ -91,5 +92,5 @@ The Overview map is a Leaflet map with Esri satellite or CARTO dark tiles. No AP
 
 - The DSM includes building heights, and lakes show up as flat water surfaces. A DTM, or a drain network burned into the terrain, would improve the 2× lift.
 - `BASE_DRAIN_MM` (50 mm) and the runoff coefficient are assumptions that have not been calibrated against BBMP stormwater-drain data.
-- OSM tags clinics as `hospital` (1,147 found), which makes hospital access look better than it really is.
+- The hospital tiers come from name, operator and footprint rules, because OSM almost never records bed counts. Matching against the NABH or Karnataka health facility registry would make them authoritative.
 - The intervention effects (for example, lakes adding 40 mm of storage) are illustrative parameters.
