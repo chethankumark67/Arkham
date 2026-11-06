@@ -1,0 +1,746 @@
+[
+ {
+  "id": "climate",
+  "icon": "⌁",
+  "name": "Climate & disaster",
+  "scenario": "Heavy rain → urban flooding",
+  "driver": "Rainfall forecast intensity",
+  "sources": [
+   "Rain gauges",
+   "Drainage sensors",
+   "Road closures",
+   "Weather forecast"
+  ],
+  "metrics": [
+   [
+    "Flood risk",
+    "High"
+   ],
+   [
+    "People exposed",
+    "18.4k"
+   ],
+   [
+    "Emergency routes",
+    "6 at risk"
+   ]
+  ],
+  "chain": [
+   [
+    "TRIGGER",
+    "Heavy rainfall",
+    "0–6 h"
+   ],
+   [
+    "PRIMARY",
+    "Drainage overload",
+    "0–12 h"
+   ],
+   [
+    "SECONDARY",
+    "Roads close",
+    "6–24 h"
+   ],
+   [
+    "TERTIARY",
+    "Emergency delays",
+    "12–36 h"
+   ],
+   [
+    "LONG TERM",
+    "Service disruption",
+    "1–3 d"
+   ]
+  ],
+  "actions": [
+   "Optimize drainage gates and pumps",
+   "Divert traffic before low-lying roads flood",
+   "Pre-position emergency teams and supplies"
+  ],
+  "base": 66,
+  "horizon": "0–3 days"
+ },
+ {
+  "id": "health",
+  "icon": "+",
+  "name": "Public health & disease",
+  "scenario": "Contaminated water → typhoid risk",
+  "driver": "Water quality anomaly",
+  "sources": [
+   "Water quality sensors",
+   "Reservoir data",
+   "Treatment plant performance",
+   "Citizen complaints",
+   "Hospital case reports"
+  ],
+  "metrics": [
+   [
+    "Water quality",
+    "Poor"
+   ],
+   [
+    "Typhoid cases",
+    "↑ 15%"
+   ],
+   [
+    "Forecast window",
+    "7–14 days"
+   ]
+  ],
+  "chain": [
+   [
+    "TRIGGER",
+    "Poor water quality",
+    "Now"
+   ],
+   [
+    "PRIMARY",
+    "Supply contamination",
+    "0–48 h"
+   ],
+   [
+    "SECONDARY",
+    "Typhoid cases rise",
+    "7–14 d"
+   ],
+   [
+    "TERTIARY",
+    "Hospital load rises",
+    "10–18 d"
+   ],
+   [
+    "LONG TERM",
+    "Medicine & emergency demand",
+    "2–4 wk"
+   ]
+  ],
+  "actions": [
+   "Trace contamination and inspect treatment plants",
+   "Increase chlorination; issue water-quality alerts",
+   "Deploy mobile purification and alternative water",
+   "Forecast hospital load and alert health departments"
+  ],
+  "base": 72,
+  "horizon": "7–14 days"
+ },
+ {
+  "id": "crime",
+  "icon": "◉",
+  "name": "Crime & public safety",
+  "scenario": "Large event → opportunistic crime",
+  "driver": "Crowd and event risk",
+  "sources": [
+   "Historical crime records",
+   "Area crime density",
+   "Event locations",
+   "Time patterns",
+   "Crowd movement estimates"
+  ],
+  "metrics": [
+   [
+    "Hotspot uplift",
+    "+22%"
+   ],
+   [
+    "Patrol zones",
+    "8"
+   ],
+   [
+    "Event window",
+    "Tonight"
+   ]
+  ],
+  "chain": [
+   [
+    "TRIGGER",
+    "Large public event",
+    "0–2 h"
+   ],
+   [
+    "PRIMARY",
+    "Police deployment shifts",
+    "0–4 h"
+   ],
+   [
+    "SECONDARY",
+    "Hotspots exploited",
+    "2–8 h"
+   ],
+   [
+    "TERTIARY",
+    "Robbery & theft risk",
+    "4–12 h"
+   ],
+   [
+    "LONG TERM",
+    "Public confidence impact",
+    "1–3 d"
+   ]
+  ],
+  "actions": [
+   "Redeploy patrols to predicted opportunistic crime zones",
+   "Adjust surveillance coverage at event perimeters",
+   "Share smart-patrol recommendations with safety teams"
+  ],
+  "base": 58,
+  "horizon": "0–12 hours"
+ },
+ {
+  "id": "unrest",
+  "icon": "◎",
+  "name": "Riot & civil unrest",
+  "scenario": "Crowd disruption blocks key roads",
+  "driver": "Crowd disruption intensity",
+  "sources": [
+   "Crowd movement estimates",
+   "Event permits",
+   "Road closures",
+   "Transit demand",
+   "Emergency call volumes"
+  ],
+  "metrics": [
+   [
+    "Crowd pressure",
+    "Elevated"
+   ],
+   [
+    "Road links at risk",
+    "5"
+   ],
+   [
+    "Safe zones",
+    "4"
+   ]
+  ],
+  "chain": [
+   [
+    "TRIGGER",
+    "Crowd unrest",
+    "0–1 h"
+   ],
+   [
+    "PRIMARY",
+    "Roads blocked",
+    "0–3 h"
+   ],
+   [
+    "SECONDARY",
+    "Traffic collapse",
+    "1–5 h"
+   ],
+   [
+    "TERTIARY",
+    "Emergency delays",
+    "2–8 h"
+   ],
+   [
+    "LONG TERM",
+    "Crime & service disruption",
+    "4–12 h"
+   ]
+  ],
+  "actions": [
+   "Predict crowd movement and protect safe zones",
+   "Publish alternate routes and activate emergency corridors",
+   "Redistribute response teams to prevent access gaps"
+  ],
+  "base": 62,
+  "horizon": "0–12 hours"
+ },
+ {
+  "id": "power",
+  "icon": "ϟ",
+  "name": "Power grid",
+  "scenario": "Substation failure → local blackout",
+  "driver": "Grid stress intensity",
+  "sources": [
+   "Substation telemetry",
+   "Grid load",
+   "Weather exposure",
+   "Fault reports",
+   "Backup power status"
+  ],
+  "metrics": [
+   [
+    "Grid stress",
+    "Elevated"
+   ],
+   [
+    "Critical sites",
+    "12"
+   ],
+   [
+    "Backup coverage",
+    "81%"
+   ]
+  ],
+  "chain": [
+   [
+    "TRIGGER",
+    "Substation failure",
+    "0–1 h"
+   ],
+   [
+    "PRIMARY",
+    "Local blackout",
+    "0–2 h"
+   ],
+   [
+    "SECONDARY",
+    "Signals fail",
+    "0–3 h"
+   ],
+   [
+    "TERTIARY",
+    "Congestion & access risk",
+    "1–6 h"
+   ],
+   [
+    "LONG TERM",
+    "Critical service strain",
+    "4–24 h"
+   ]
+  ],
+  "actions": [
+   "Assess substation vulnerability and balance load",
+   "Activate backup power at critical services",
+   "Prioritize hospitals, pumps, and traffic control"
+  ],
+  "base": 54,
+  "horizon": "0–24 hours"
+ },
+ {
+  "id": "healthcare",
+  "icon": "✚",
+  "name": "Healthcare capacity",
+  "scenario": "Disease surge → hospital overload",
+  "driver": "Patient surge intensity",
+  "sources": [
+   "Hospital bed occupancy",
+   "Emergency department arrivals",
+   "Ambulance availability",
+   "Medicine inventory",
+   "Disease surveillance"
+  ],
+  "metrics": [
+   [
+    "Bed occupancy",
+    "78%"
+   ],
+   [
+    "Surge forecast",
+    "+19%"
+   ],
+   [
+    "Ambulances to shift",
+    "6"
+   ]
+  ],
+  "chain": [
+   [
+    "TRIGGER",
+    "Disease surge",
+    "0–2 d"
+   ],
+   [
+    "PRIMARY",
+    "Beds fill",
+    "1–4 d"
+   ],
+   [
+    "SECONDARY",
+    "Reduced capacity",
+    "2–6 d"
+   ],
+   [
+    "TERTIARY",
+    "Ambulance delays",
+    "3–7 d"
+   ],
+   [
+    "LONG TERM",
+    "Care access gaps",
+    "1–2 wk"
+   ]
+  ],
+  "actions": [
+   "Forecast beds and staff demand across hospitals",
+   "Redistribute ambulances and critical supplies",
+   "Prepare alternate treatment centers before capacity peaks"
+  ],
+  "base": 61,
+  "horizon": "1–14 days"
+ },
+ {
+  "id": "water",
+  "icon": "◌",
+  "name": "Water infrastructure",
+  "scenario": "Treatment plant failure → shortage",
+  "driver": "Water system failure intensity",
+  "sources": [
+   "Water quality sensors",
+   "Treatment plant telemetry",
+   "Reservoir levels",
+   "Pipe pressure",
+   "Tanker availability"
+  ],
+  "metrics": [
+   [
+    "Plant stress",
+    "Moderate"
+   ],
+   [
+    "Wards exposed",
+    "9"
+   ],
+   [
+    "Backup routes",
+    "3"
+   ]
+  ],
+  "chain": [
+   [
+    "TRIGGER",
+    "Treatment plant failure",
+    "0–2 h"
+   ],
+   [
+    "PRIMARY",
+    "Supply falls",
+    "2–12 h"
+   ],
+   [
+    "SECONDARY",
+    "Water shortage",
+    "6–24 h"
+   ],
+   [
+    "TERTIARY",
+    "Public health risk",
+    "1–3 d"
+   ],
+   [
+    "LONG TERM",
+    "Service recovery strain",
+    "2–7 d"
+   ]
+  ],
+  "actions": [
+   "Score plants and prioritize predictive maintenance",
+   "Reroute supply through backup mains",
+   "Plan tanker allocation and safe alternate sources"
+  ],
+  "base": 57,
+  "horizon": "0–7 days"
+ },
+ {
+  "id": "telecom",
+  "icon": "⌁",
+  "name": "Telecom resilience",
+  "scenario": "Tower failure → alert coverage gaps",
+  "driver": "Network outage intensity",
+  "sources": [
+   "Tower status",
+   "Network coverage",
+   "Power backup status",
+   "Incident tickets",
+   "Emergency alert delivery"
+  ],
+  "metrics": [
+   [
+    "Coverage gap",
+    "12%"
+   ],
+   [
+    "Towers exposed",
+    "7"
+   ],
+   [
+    "Redundant links",
+    "4"
+   ]
+  ],
+  "chain": [
+   [
+    "TRIGGER",
+    "Network failure",
+    "0–1 h"
+   ],
+   [
+    "PRIMARY",
+    "Coverage drops",
+    "0–2 h"
+   ],
+   [
+    "SECONDARY",
+    "Communications degrade",
+    "1–4 h"
+   ],
+   [
+    "TERTIARY",
+    "Alerts fail to reach zones",
+    "2–6 h"
+   ],
+   [
+    "LONG TERM",
+    "Coordination gaps",
+    "4–12 h"
+   ]
+  ],
+  "actions": [
+   "Predict tower risk and check backup power",
+   "Route critical traffic through redundant links",
+   "Prepare alternate emergency messaging channels"
+  ],
+  "base": 48,
+  "horizon": "0–12 hours"
+ },
+ {
+  "id": "cyber",
+  "icon": "⌘",
+  "name": "Cyber resilience",
+  "scenario": "Cyber attack targets critical systems",
+  "driver": "Cyber threat severity",
+  "sources": [
+   "Security alerts",
+   "Asset inventory",
+   "Network dependencies",
+   "Incident reports",
+   "Backup and failover status"
+  ],
+  "metrics": [
+   [
+    "Threat level",
+    "Watch"
+   ],
+   [
+    "Systems exposed",
+    "5"
+   ],
+   [
+    "Recovery target",
+    "45 min"
+   ]
+  ],
+  "chain": [
+   [
+    "TRIGGER",
+    "Cyber intrusion",
+    "0–1 h"
+   ],
+   [
+    "PRIMARY",
+    "Critical system compromised",
+    "0–2 h"
+   ],
+   [
+    "SECONDARY",
+    "Operations degrade",
+    "1–4 h"
+   ],
+   [
+    "TERTIARY",
+    "Service disruption spreads",
+    "2–8 h"
+   ],
+   [
+    "LONG TERM",
+    "Recovery & trust impact",
+    "1–3 d"
+   ]
+  ],
+  "actions": [
+   "Isolate affected systems and assess dependencies",
+   "Simulate service impacts before containment changes",
+   "Activate failover and recovery recommendations"
+  ],
+  "base": 44,
+  "horizon": "0–3 days"
+ },
+ {
+  "id": "transport",
+  "icon": "⇄",
+  "name": "Transportation",
+  "scenario": "Metro disruption → road congestion",
+  "driver": "Transit disruption intensity",
+  "sources": [
+   "Metro service status",
+   "Passenger flows",
+   "Traffic speeds",
+   "Road incidents",
+   "Bus and shuttle capacity"
+  ],
+  "metrics": [
+   [
+    "Passenger shift",
+    "+16k"
+   ],
+   [
+    "Road delay",
+    "+24 min"
+   ],
+   [
+    "Alternate services",
+    "11"
+   ]
+  ],
+  "chain": [
+   [
+    "TRIGGER",
+    "Metro service failure",
+    "0–1 h"
+   ],
+   [
+    "PRIMARY",
+    "Passengers reroute",
+    "0–2 h"
+   ],
+   [
+    "SECONDARY",
+    "Road congestion",
+    "1–4 h"
+   ],
+   [
+    "TERTIARY",
+    "Emergency access slows",
+    "2–6 h"
+   ],
+   [
+    "LONG TERM",
+    "Economic productivity loss",
+    "4–24 h"
+   ]
+  ],
+  "actions": [
+   "Predict passenger flows and add alternate transit",
+   "Dynamically manage routes and signal timing",
+   "Coordinate shuttle service around disrupted stations"
+  ],
+  "base": 60,
+  "horizon": "0–24 hours"
+ },
+ {
+  "id": "environment",
+  "icon": "⌂",
+  "name": "Environmental health",
+  "scenario": "Poor air quality → respiratory surge",
+  "driver": "Air quality event intensity",
+  "sources": [
+   "Air quality monitors",
+   "Weather and wind",
+   "Traffic emissions",
+   "Industrial sources",
+   "Hospital respiratory visits"
+  ],
+  "metrics": [
+   [
+    "Air quality",
+    "AQI 164"
+   ],
+   [
+    "Vulnerable wards",
+    "6"
+   ],
+   [
+    "Respiratory trend",
+    "Rising"
+   ]
+  ],
+  "chain": [
+   [
+    "TRIGGER",
+    "Poor air quality",
+    "0–6 h"
+   ],
+   [
+    "PRIMARY",
+    "Exposure rises",
+    "2–12 h"
+   ],
+   [
+    "SECONDARY",
+    "Asthma cases increase",
+    "1–3 d"
+   ],
+   [
+    "TERTIARY",
+    "Hospital visits rise",
+    "2–5 d"
+   ],
+   [
+    "LONG TERM",
+    "Vulnerable groups affected",
+    "3–10 d"
+   ]
+  ],
+  "actions": [
+   "Forecast exposure and identify likely pollution sources",
+   "Alert vulnerable areas and recommend safer routes",
+   "Issue public health warnings and prepare clinics"
+  ],
+  "base": 63,
+  "horizon": "0–10 days"
+ },
+ {
+  "id": "economy",
+  "icon": "₹",
+  "name": "Economic resilience",
+  "scenario": "Flood → logistics disruption",
+  "driver": "Supply chain disruption intensity",
+  "sources": [
+   "Road and freight status",
+   "Warehouse capacity",
+   "Business continuity reports",
+   "Market access",
+   "Supply chain dependencies"
+  ],
+  "metrics": [
+   [
+    "Freight routes",
+    "4 at risk"
+   ],
+   [
+    "Businesses exposed",
+    "1.2k"
+   ],
+   [
+    "Supply delay",
+    "+8 h"
+   ]
+  ],
+  "chain": [
+   [
+    "TRIGGER",
+    "Urban flood",
+    "0–6 h"
+   ],
+   [
+    "PRIMARY",
+    "Road freight reroutes",
+    "2–12 h"
+   ],
+   [
+    "SECONDARY",
+    "Deliveries delayed",
+    "6–24 h"
+   ],
+   [
+    "TERTIARY",
+    "Business disruption",
+    "1–3 d"
+   ],
+   [
+    "LONG TERM",
+    "Economic loss accumulates",
+    "2–14 d"
+   ]
+  ],
+  "actions": [
+   "Recommend alternate freight and logistics routes",
+   "Estimate supply-chain exposure and delivery delays",
+   "Prepare business continuity options for affected areas"
+  ],
+  "base": 56,
+  "horizon": "0–14 days"
+ }
+]

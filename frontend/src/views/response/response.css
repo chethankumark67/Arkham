@@ -1,0 +1,44 @@
+#resp.rs{display:grid!important;grid-template-columns:minmax(0,1fr) 340px;grid-template-rows:max-content max-content max-content;grid-auto-rows:max-content;gap:12px;padding:12px;overflow:auto;min-height:0;align-content:start}
+#resp .rs-card{height:auto!important;min-height:max-content!important;flex:none!important;overflow:visible!important;max-height:none!important;display:block!important;margin:0}
+#resp .rs-head,#resp .rs-how{grid-column:1/-1}
+#resp .rs-queue{grid-column:1}
+#resp .rs-side{grid-column:2;display:flex;flex-direction:column;gap:12px;align-self:start}
+#resp .rs-kpis{display:flex;flex-wrap:wrap;gap:4px}
+#resp .rs-kpis .m{flex:1 1 130px;display:flex;flex-direction:column}
+#resp .rs-kpis small{color:var(--mu);font-size:10.5px}
+#resp .rs-threat.Critical b{color:#ff8f7a}#resp .rs-threat.High b{color:#FE9135}#resp .rs-threat.Elevated b{color:#FBC246}#resp .rs-threat.Normal b{color:#9be0b8}
+#resp .rs-c.P1{color:#ff8f7a}#resp .rs-c.P2{color:#FE9135}#resp .rs-c.P3{color:#FBC246}#resp .rs-c.Monitor{color:var(--mu)}
+#resp .rs-mode{font-size:14px}
+#resp .rs-body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:6px;font-size:12.5px}
+#resp .rs-toggle{cursor:pointer;user-select:none}
+#resp .rs-formula{font:600 13px var(--mono,monospace);color:#FE9135;background:#0f1215;padding:6px 10px;border-radius:6px}
+#resp .rs-body ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+#resp .rs-tiers{display:flex;flex-wrap:wrap;gap:14px}
+#resp .rs-tier{font:700 10.5px var(--mono,monospace);padding:3px 7px;border-radius:6px;display:inline-block;min-width:24px;text-align:center}
+#resp .rs-tier.P1{background:#5a1f17;color:#ffb4a6;border:1px solid #e5533d}
+#resp .rs-tier.P2{background:#3d2614;color:#FE9135;border:1px solid #FE9135}
+#resp .rs-tier.P3{background:#3a3017;color:#FBC246;border:1px solid #a88a2c}
+#resp .rs-tier.Monitor{background:#1d2227;color:var(--mu);border:1px solid #2b3138}
+#resp .rs-filters{display:flex;flex-wrap:wrap;gap:8px;padding:8px 12px;border-bottom:1px solid #22282e}
+#resp .rs-filters select{background:#0f1215;border:1px solid #2b3138;border-radius:6px;color:var(--tx);padding:5px 8px;font:12px Inter,sans-serif}
+#resp .rs-gh{padding:8px 12px 4px;font:600 11px var(--mono,monospace);color:var(--mu);display:flex;gap:8px;align-items:center}
+#resp .rs-act{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.05);font-size:12.5px}
+#resp .rs-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+#resp .rs-l1{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+#resp .rs-ag{font:600 10.5px var(--mono,monospace);color:#8fb8de}
+#resp .rs-why{color:var(--mu);font-size:11.5px}
+#resp .rs-chips{display:flex;gap:5px;flex-wrap:wrap}
+#resp .rs-chip{font:600 10px var(--mono,monospace);padding:2px 7px;border-radius:10px;border:1px solid}
+#resp .rs-chip.physics{color:#9be0b8;border-color:#2f9e63}#resp .rs-chip.model{color:#8fb8de;border-color:#4c8dd6}#resp .rs-chip.citizen{color:#ffb4a6;border-color:#e5533d}
+#resp .rs-score{width:190px;flex:none;display:flex;flex-direction:column;gap:3px;align-items:stretch}
+#resp .rs-score>b{font:600 22px var(--mono,monospace)}
+#resp .rs-score small{color:var(--mu);font:10.5px var(--mono,monospace)}
+#resp .rs-score small.rs-late{color:#ff8f7a}
+#resp .rs-bar{display:flex;height:12px;border-radius:3px;overflow:hidden;gap:1px}
+#resp .rs-bar i{font:700 8px var(--mono,monospace);color:#111;text-align:center;font-style:normal;line-height:12px;flex-basis:0}
+#resp .rs-btns{display:flex;gap:6px;margin-top:3px}
+#resp .rs-wl{display:grid;grid-template-columns:120px 1fr;gap:8px;align-items:center;font-size:11.5px}
+#resp .rs-wbar{display:flex;height:14px;gap:1px}
+#resp .rs-wbar i{font:700 9px var(--mono,monospace);font-style:normal;text-align:center;line-height:14px;color:#111;border-radius:2px}
+#resp .rs-wbar i.P1{background:#e5533d}#resp .rs-wbar i.P2{background:#FE9135}#resp .rs-wbar i.P3{background:#FBC246}#resp .rs-wbar i.Monitor{background:#55606a;color:#ddd}
+@media (max-width:900px){#resp.rs{grid-template-columns:1fr}#resp .rs-side{grid-column:1}}

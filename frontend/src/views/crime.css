@@ -1,0 +1,109 @@
+/* Crime Intelligence view (Suraksha-Grid). Reuses the legacy dark card system. */
+#crime{display:grid!important;grid-template-columns:minmax(0,1fr) 380px;grid-template-rows:none;grid-auto-rows:max-content;gap:12px;padding:12px;overflow:auto;min-height:0;align-content:start}
+#crime .cr-head{grid-column:1/-1;height:auto!important;min-height:max-content!important;overflow:visible!important;display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:10px 14px}
+#crime .cr-status{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex:1;justify-content:flex-end}
+#crime .cr-pill{font:600 11px var(--mono,monospace);padding:4px 9px;border-radius:12px;border:1px solid #2b3138;display:flex;gap:6px;align-items:center}
+#crime .cr-pill small{font-weight:400;color:var(--mu)}
+#crime .cr-pill.ok{color:#9be0b8;background:#173a28;border-color:#2f9e63}#crime .cr-pill.warn{color:#FBC246;background:#3a3017}
+#crime .cr-off{color:#ffb4a6;font:600 11.5px var(--mono,monospace)}
+#crime .cr-note{flex-basis:100%;font-size:11px;color:#FBC246}
+#crime .cr-map{grid-column:1;position:relative;height:60vh;min-height:440px}
+#crime:is([data-tab=trends],[data-tab=network],[data-tab=investigate]) .cr-map{display:none!important}
+#crime .cr-legend{position:absolute;display:flex;flex-wrap:wrap;gap:4px 12px;max-width:520px;font:11px var(--mono,monospace);background:#14181cdd;padding:6px 9px;border-radius:6px;z-index:3}
+#crime .cr-legend i{display:inline-block;width:12px;height:9px;margin-right:5px;border-radius:2px;vertical-align:middle}
+#crime .cr-side{grid-column:2;display:flex;flex-direction:column;gap:12px;min-height:0;align-self:start}
+#crime .cr-bottom{grid-column:1/-1;display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:12px;align-items:start}
+#crime .cr-card{height:auto!important;max-height:none!important;overflow:visible!important;display:block!important;margin:0;flex:none!important;min-height:max-content!important}
+#crime .cr-body{display:flex;flex-direction:column;gap:8px;padding:10px 12px 12px}
+#crime label{display:flex;flex-direction:column;gap:4px;font-size:11.5px;color:var(--mu)}
+#crime label b{color:var(--tx);font-weight:600}
+#crime input:not([type=checkbox]):not([type=range]),#crime select,#crime textarea{background:#0f1215;border:1px solid #2b3138;border-radius:6px;color:var(--tx);padding:6px 8px;font:12.5px Inter,sans-serif;width:100%;box-sizing:border-box}
+#crime textarea{resize:vertical;min-height:62px}
+#crime input:focus,#crime select:focus,#crime textarea:focus{outline:1px solid #FE9135;border-color:#FE9135}
+#crime .cr-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}#crime .cr-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+#crime .cr-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#crime .cr-check{flex-direction:row;align-items:center;gap:6px;color:var(--tx);cursor:pointer}
+#crime .run:disabled{opacity:.5;cursor:not-allowed}
+#crime .cr-mini{font-size:11px;padding:3px 8px}
+#crime .cr-err{color:#ffb4a6;background:#3a1d17;border:1px solid #6b2f25;border-radius:6px;padding:6px 8px;font-size:12px}
+#crime .cr-result,#crime .cr-analysis,#crime .cr-kvs{display:flex;flex-direction:column;gap:6px;border-top:1px solid #22282e;padding-top:8px}
+#crime .cr-score{display:flex;align-items:baseline;gap:6px;border-left:4px solid;padding:4px 10px;background:#0f1215;border-radius:6px}
+#crime .cr-score b{font:600 30px var(--mono,monospace)}#crime .cr-score span{color:var(--mu)}
+#crime .cr-score em{margin-left:auto;font:600 11px var(--mono,monospace);color:#0b0d0f;padding:3px 8px;border-radius:10px;font-style:normal}
+#crime .cr-kv{display:flex;justify-content:space-between;gap:10px;font-size:12.5px}#crime .cr-kv span{color:var(--mu)}#crime .cr-kv b{text-align:right;font-weight:600}
+#crime .cr-drivers{display:flex;flex-direction:column;gap:4px}#crime .cr-drivers small{color:var(--mu)}
+#crime .cr-drivers>div{display:grid;grid-template-columns:90px 1fr 48px;gap:8px;align-items:center;font-size:12px}#crime .cr-drivers b{font-family:var(--mono,monospace);text-align:right}
+#crime .cr-bar{height:6px;background:#22282e;border-radius:3px;overflow:hidden}#crime .cr-bar i{display:block;height:100%;background:#FE9135}
+#crime .cr-chips{display:flex;flex-wrap:wrap;gap:5px}
+#crime .cr-chips>span{font-size:11.5px;padding:3px 8px;border:1px solid #2b3138;border-radius:10px;background:#0f1215}
+#crime .cr-chips small{color:var(--mu);font:10px var(--mono,monospace)}
+#crime .cr-sub{font:600 10.5px var(--mono,monospace);letter-spacing:.06em;color:var(--mu);text-transform:uppercase;margin-top:4px}
+#crime .cr-alert{padding:8px 10px;border-radius:6px;font-size:12.5px;border-left:4px solid}
+#crime .cr-alert.high{background:#3a1d17;border-color:#e5533d}#crime .cr-alert.medium{background:#3a3017;border-color:#FBC246}#crime .cr-alert b{margin-right:6px}
+#crime .cr-table{width:100%;border-collapse:collapse;font-size:12px}#crime .cr-table td,#crime .cr-table th{padding:5px 4px;border-bottom:1px solid #22282e;text-align:left;vertical-align:top}
+#crime .cr-table th{color:var(--mu);font-weight:500;font-size:11px}#crime .num{text-align:right;font-family:var(--mono,monospace)}
+#crime .cr-table tbody tr:hover{background:#ffffff08}
+#crime .cr-plate{flex:1;font-family:var(--mono,monospace)!important;letter-spacing:.08em;text-transform:uppercase}
+#crime .cr-bars{display:flex;gap:2px;align-items:flex-end;height:90px}
+#crime .cr-barcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px;min-width:0}
+#crime .cr-barcol i{display:block;width:100%;border-radius:2px 2px 0 0;min-height:2px}
+#crime .cr-barcol small{font:9px var(--mono,monospace);color:var(--mu)}
+#crime .muted{color:var(--mu)}
+#crime .cr-head,#crime .cr-kpis,#crime .cr-filters,#crime .cr-tabs,#crime .cr-full{grid-column:1/-1}
+#crime .cr-map{grid-row:span 1}
+#crime[data-tab] .cr-side{grid-row:auto}
+/* place side next to map: map and side share the row after the tabs */
+#crime .cr-map + .cr-side{grid-column:2;grid-row:5}
+#crime[data-tab] .cr-map{grid-row:5}
+#crime .cr-bottom.cr-b2{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
+#crime .cr-synbadge,#crime .cr-syn span{font:700 10.5px var(--mono,monospace);letter-spacing:.08em;color:#0b0d0f;background:#FBC246;padding:2px 7px;border-radius:4px;margin-right:6px}
+#crime .cr-kpis{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}
+#crime .cr-kpi{background:#14181c;border:1px solid #22282e;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+#crime .cr-kpi small{font:600 10px var(--mono,monospace);letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
+#crime .cr-kpi b{font:600 24px var(--mono,monospace);color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#crime .cr-kpi b.sm{font:600 15px Inter,sans-serif;padding:5px 0 4px}#crime .cr-kpi b i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
+#crime .cr-kpi em{font-style:normal;font-size:11px;color:var(--mu)}#crime .cr-kpi em.up{color:#ff8f7d}#crime .cr-kpi em.down{color:#7fd6a2}
+#crime .cr-kpi.cr-syn{justify-content:center;align-items:flex-start;border-color:#6b5a20;background:#221d0e}
+#crime .cr-filters{height:auto!important;min-height:max-content!important;flex:none!important;overflow:visible!important;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+#crime .cr-ftypes{display:flex;flex-wrap:wrap;gap:6px;align-items:center}#crime .cr-ftypes>small,#crime .cr-frow>small{color:var(--mu);font-size:11px;margin-right:4px}
+#crime .cr-tchip{--c:#888;display:flex;align-items:center;gap:6px;font:12px Inter,sans-serif;color:var(--mu);background:#0f1215;border:1px solid #2b3138;border-radius:14px;padding:4px 10px;cursor:pointer}
+#crime .cr-tchip i{width:9px;height:9px;border-radius:50%;background:var(--c);opacity:.6}
+#crime .cr-tchip.on{color:var(--tx);border-color:var(--c);background:color-mix(in srgb,var(--c) 18%,#0f1215)}#crime .cr-tchip.on i{opacity:1}
+#crime .cr-frow{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}#crime .cr-frow label{width:150px}#crime .cr-frow label:has(select){width:190px}
+#crime .cr-presets{display:flex;gap:4px;padding-bottom:3px}
+#crime .cr-tabs{display:flex;gap:2px;border-bottom:1px solid #2b3138}
+#crime .cr-tabs button{background:none;border:0;border-bottom:2px solid transparent;color:var(--mu);font:600 12.5px Inter,sans-serif;padding:8px 14px;cursor:pointer}
+#crime .cr-tabs button.on{color:var(--tx);border-bottom-color:#FE9135}#crime .cr-tabs button:hover{color:var(--tx)}
+#crime .btn.on{border-color:#FE9135;color:#FE9135}
+#crime .cr-maptools{position:absolute;pointer-events:auto;display:flex;flex-direction:column;gap:4px;z-index:5}#crime .cr-maptools .btn{background:#14181cdd}
+#crime .cr-full{display:grid;gap:12px;align-items:start}
+#crime .cr-trends{grid-template-columns:repeat(2,minmax(0,1fr))}#crime .cr-span2{grid-column:1/-1}
+#crime .cr-netgrid{grid-template-columns:minmax(0,1fr) 360px}#crime .cr-sidecol{display:flex;flex-direction:column;gap:12px}
+#crime .cr-invgrid{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}#crime .cr-invgrid>.cr-span2:first-child{grid-column:1}
+#crime .cr-seg{gap:4px;margin-bottom:6px}#crime .cr-seg .sp{flex:1}
+#crime .cr-legend2{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11px;color:var(--mu);margin-top:4px}
+#crime .cr-legend2 i,#crime i.sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
+#crime .cr-legend2 b{margin-left:4px;color:var(--tx);font-family:var(--mono,monospace)}
+#crime .cr-donutwrap{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+#crime .cr-donut-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+#crime .cr-donut-c b{font:600 20px var(--mono,monospace)}#crime .cr-donut-c small{font-size:10px;color:var(--mu)}
+#crime .cr-hbars{flex:1;min-width:180px;display:flex;flex-direction:column;gap:3px}
+#crime .cr-hbars>div{display:grid;grid-template-columns:150px 1fr 34px;gap:6px;align-items:center;font-size:11.5px;cursor:pointer}
+#crime .cr-hbars>div:hover{background:#ffffff08}#crime .cr-hbars span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#crime .cr-hbars i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}#crime .cr-hbars b{text-align:right;font-family:var(--mono,monospace)}
+#crime .cr-hm-grid{display:grid;grid-template-columns:30px repeat(24,minmax(0,1fr));gap:2px;align-items:center}
+#crime .cr-hm-grid i{display:block;aspect-ratio:1/1;border-radius:2px;min-height:10px}#crime .cr-hm-grid i.on{outline:2px solid #fff}
+#crime .cr-hm-grid small{font:9.5px var(--mono,monospace);color:var(--mu)}#crime .cr-hm-grid .hh{text-align:center}
+#crime .cr-hm-foot{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mu);margin-top:6px}
+#crime .cr-ramp{display:flex;align-items:center;gap:5px;font-family:var(--mono,monospace)}#crime .cr-ramp i{width:80px;height:8px;border-radius:2px;background:linear-gradient(90deg,rgba(254,145,53,.12),#FE9135)}
+#crime .cr-status-bd{display:flex;flex-direction:column;gap:5px}
+#crime .cr-stack{display:flex;height:12px;gap:2px;border-radius:3px;overflow:hidden;margin-bottom:4px}#crime .cr-stack i{display:block;height:100%}
+#crime .cr-net-svg{width:100%;height:auto;background:#0f1215;border-radius:6px;display:block}
+#crime .cr-net-lbl{font:600 10px Inter,sans-serif;fill:#e6e9ec;paint-order:stroke;stroke:#0b0d0f;stroke-width:3px;pointer-events:none}
+#crime .cr-search{flex:1}#crime .mono{font-family:var(--mono,monospace);font-size:11.5px}
+#crime .cr-inc-t tr.sel{background:#FE913514}#crime .cr-inc-d td{background:#0f1215;font-size:12px;line-height:1.5}
+#crime .cr-pager{justify-content:flex-end;margin-top:6px}
+@media(max-width:1400px){#crime .cr-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:1200px){#crime .cr-bottom{grid-template-columns:1fr 1fr}#crime .cr-wide{grid-column:1/-1}}
+@media(max-width:1000px){#crime .cr-full,#crime .cr-bottom.cr-b2{display:block}#crime .cr-full>*{margin-bottom:12px}#crime{display:block!important}#crime>*{margin-bottom:12px}#crime .cr-map{height:420px}#crime .cr-bottom{display:block}#crime .cr-bottom>*{margin-bottom:12px}}
+#crime[data-tab=map] .cr-side,#crime[data-tab=overview] .cr-side{max-height:max(60vh,440px);overflow:auto}

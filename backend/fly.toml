@@ -1,0 +1,23 @@
+# Fly.io API deployment:  cd backend && fly launch --no-deploy --copy-config && fly deploy
+# Optional: fly postgres create / attach (sets DATABASE_URL; enable PostGIS with CREATE EXTENSION postgis)
+#           fly redis create (Upstash; set REDIS_URL with fly secrets set REDIS_URL=...)
+app = "arkham-api"
+primary_region = "sin"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  WEB_CONCURRENCY = "1"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  memory = "2gb"
+  cpu_kind = "shared"
+  cpus = 2

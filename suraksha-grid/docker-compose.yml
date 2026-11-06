@@ -1,0 +1,66 @@
+services:
+  # 1. PostgreSQL with PostGIS Spatial Extensions
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: suraksha-postgis
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: surakshagrid
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d surakshagrid"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Neo4j Graph Database (Multi-Hop Entity Resolution)
+  neo4j:
+    image: neo4j:5.18.0
+    container_name: suraksha-neo4j
+    environment:
+      NEO4J_AUTH: neo4j/suraksha123
+      NEO4J_PLUGINS: '["apoc"]'
+    ports:
+      - "7474:7474"   # Neo4j Browser UI
+      - "7687:7687"   # Bolt Protocol
+    volumes:
+      - neo4j_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:7474 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # 3. FastAPI Core Engine & Prediction Service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: suraksha-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:password@db:5432/surakshagrid
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: suraksha123
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+      API_RELOAD: "false"
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+
+volumes:
+  pgdata:
+  neo4j_data:

@@ -1,0 +1,7 @@
+.venv
+__pycache__
+**/__pycache__
+.pytest_cache
+data/raw/dem_*.tif
+data/frontend-backup-before-api.html
+tests

@@ -1,0 +1,34 @@
+# --- secrets & local state (never commit) ---
+.env
+**/.env
+!**/.env.example
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+**/node_modules/
+**/dist/
+.DS_Store
+.superpowers/
+.claude/
+
+# --- not needed to run the prototype ---
+*.pdf
+*.pptx
+*.rar
+/arkham-intro.mp4
+/Arkham — City Digital Twin, Bengaluru (2).html
+/NammaTwin_Complete_Build_Spec*.md
+/docs/
+frontend/legacy/
+backend/data/frontend-backup-before-api.html
+# 80 MB Copernicus tiles: the cropped COG in data/processed is used instead
+backend/data/raw/dem_*.tif
+# runtime data
+backend/data/uploads/
+backend/data/complaints.json
+backend/cache/
+.vscode/
+
+# local archive of files not needed in the repo
+/waste/
+/arkham-city-twin.zip
